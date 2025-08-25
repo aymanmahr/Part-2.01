@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gamified To-Do List</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+    }
+    .completed {
+      text-decoration: line-through;
+      color: #9ca3af;
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-r from-purple-600 to-blue-500 min-h-screen flex items-center justify-center p-4">
+  <div class="bg-white/90 backdrop-blur-md shadow-2xl rounded-2xl p-6 w-full max-w-md">
+    <h1 class="text-2xl font-bold text-center text-gray-800 mb-4">🎯 Gamified To-Do List</h1>
+
+    <!-- Progress Bar -->
+    <div class="w-full bg-gray-200 rounded-full h-4 mb-4">
+      <div id="progress" class="bg-green-500 h-4 rounded-full transition-all duration-300" style="width: 0%"></div>
+    </div>
+
+    <!-- XP Display -->
+    <p class="text-center text-gray-700 mb-4">XP: <span id="xp">0</span> 🪙</p>
+
+    <!-- Task Input -->
+    <div class="flex mb-4">
+      <input id="taskInput" type="text" placeholder="Add a new task..." class="flex-grow border rounded-l-lg p-2 focus:outline-none">
+      <button id="addTaskBtn" class="bg-blue-600 text-white px-4 rounded-r-lg hover:bg-blue-700">Add</button>
+    </div>
+
+    <!-- Task List -->
+    <ul id="taskList" class="space-y-2"></ul>
+  </div>
+
+  <script>
+    const taskInput = document.getElementById("taskInput");
+    const addTaskBtn = document.getElementById("addTaskBtn");
+    const taskList = document.getElementById("taskList");
+    const xpDisplay = document.getElementById("xp");
+    const progress = document.getElementById("progress");
+
+    let xp = 0;
+    let totalTasks = 0;
+    let completedTasks = 0;
+
+    function updateProgress() {
+      if (totalTasks === 0) {
+        progress.style.width = "0%";
+        return;
+      }
+      let percent = (completedTasks / totalTasks) * 100;
+      progress.style.width = percent + "%";
+    }
+
+    function addTask(taskText) {
+      if (!taskText.trim()) return;
+
+      totalTasks++;
+
+      const li = document.createElement("li");
+      li.className = "flex items-center justify-between bg-gray-100 p-2 rounded-lg shadow";
+
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      checkbox.className = "mr-2 h-5 w-5";
+
+      const span = document.createElement("span");
+      span.textContent = taskText;
+
+      const deleteBtn = document.createElement("button");
+      deleteBtn.textContent = "❌";
+      deleteBtn.className = "ml-2 text-red-500 hover:text-red-700";
+
+      li.appendChild(checkbox);
+      li.appendChild(span);
+      li.appendChild(deleteBtn);
+      taskList.appendChild(li);
+
+      checkbox.addEventListener("change", () => {
+        if (checkbox.checked) {
+          span.classList.add("completed");
+          xp += 10;
+          completedTasks++;
+        } else {
+          span.classList.remove("completed");
+          xp -= 10;
+          completedTasks--;
+        }
+        xpDisplay.textContent = xp;
+        updateProgress();
+      });
+
+      deleteBtn.addEventListener("click", () => {
+        if (checkbox.checked) {
+          completedTasks--;
+          xp -= 10;
+          xpDisplay.textContent = xp;
+        }
+        totalTasks--;
+        li.remove();
+        updateProgress();
+      });
+
+      taskInput.value = "";
+      updateProgress();
+    }
+
+    addTaskBtn.addEventListener("click", () => addTask(taskInput.value));
+    taskInput.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") addTask(taskInput.value);
+    });
+  </script>
+</body>
+</html>
