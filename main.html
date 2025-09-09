@@ -51,15 +51,15 @@
 
     function updateProgress() {
       if (totalTasks === 0) {
-        progress.style.width = "0%";
-        return;
+        progress.style.width = "0%"; 
+        return;  <!-- i dont know the fuck why i got to return here-->
       }
       let percent = (completedTasks / totalTasks) * 100;
       progress.style.width = percent + "%";
     }
 
     function addTask(taskText) {
-      if (!taskText.trim()) return;
+      if (!taskText.trim()) return;<!-- it should basically return this shit-->
 
       totalTasks++;
 
